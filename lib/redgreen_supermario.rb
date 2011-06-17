@@ -1,5 +1,5 @@
 module Color
-  SoundPlayer = '/usr/bin/afplay'
+  SoundPlayers = %(afplay play)
 
   class << self
     alias_method :orig_color, :color
@@ -17,7 +17,17 @@ module Color
 
     def play_sound(sound)
       path = File.expand_path("../../sounds/#{sound}.wav", __FILE__)
-      system(SoundPlayer, path)
+      system(sound_player, path)
+    end
+
+    def sound_player
+      @sound_player ||= find_sound_player
+    end
+
+    def find_sound_player
+      SoundPlayers.find do |player|
+        system('which', player)
+      end
     end
   end
 end
